@@ -205,8 +205,83 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1968672515
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1968672518}
+  - component: {fileID: 1968672516}
+  - component: {fileID: 1968672519}
+  m_Layer: 0
+  m_Name: OrdersManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1968672516
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1968672515}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3b2b558c4756894f82beda4ba003951, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  minTime: 20
+  midTime: 45
+  maxTime: 50
+  curvature: 1.5
+  baseline: 0
+  correctCallProbability: 0.75
+  reduceWaitingTimeAfterFrozen: 0
+  acceptOrders: 1
+  numPhoneLines: 3
+--- !u!4 &1968672518
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1968672515}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.7140048, y: -1.1342752, z: 0.4695326}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1968672519
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1968672515}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3b2b558c4756894f82beda4ba003951, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  minTime: 1
+  midTime: 2
+  maxTime: 3
+  curvature: 1.5
+  baseline: 0
+  correctCallProbability: 0.75
+  reduceWaitingTimeAfterFrozen: 0
+  acceptOrders: 1
+  numPhoneLines: 5
 --- !u!1001 &1053847823777465697
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -220,7 +295,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1053847824702392284, guid: 517f9552a7083c64baf2cf0c5e14b3b4, type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1053847824702392284, guid: 517f9552a7083c64baf2cf0c5e14b3b4, type: 3}
       propertyPath: m_LocalPosition.x
@@ -277,7 +352,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8591693700341947735, guid: 6aad108889f799d4db6770de231367fe, type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8591693700341947735, guid: 6aad108889f799d4db6770de231367fe, type: 3}
       propertyPath: m_LocalPosition.x
