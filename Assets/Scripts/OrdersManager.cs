@@ -50,7 +50,8 @@ public class OrdersManager : MonoBehaviour
         public OrderType orderType;
         public int orderValue;
         public bool isCallCorrect;
-        public List<StatusWithTime> statusList;
+        private List<StatusWithTime> statusList;
+        public StatusWithTime currentStatus;
         public float? resultQuality;
         public float? rating; // Нужно снижать и повышать рейтинг на основе каких-то событий, типа пороги всякие и т.п. По факту, можно рассчитывать его просто в конце
 
@@ -72,12 +73,19 @@ public class OrdersManager : MonoBehaviour
 
         public void Update()
         {
-            statusList[^1].time += Time.deltaTime;
+            currentStatus.time += Time.deltaTime;
         }
 
         public void ChangeStatus(OrderStatus newStatus)
         {
-            statusList.Add(new StatusWithTime(newStatus, 0.0f));
+            var newStatusWithTime = new StatusWithTime(newStatus, 0.0f);
+            statusList.Add(newStatusWithTime);
+            currentStatus = newStatusWithTime;
+        }
+
+        public bool IsTerminated()
+        {
+            return currentStatus.status >= OrderStatus.Finished;
         }
 
         static public int RandomOrderValue(OrderType orderType)
@@ -114,6 +122,7 @@ public class OrdersManager : MonoBehaviour
     }
 
     private List<Order> orderList;
+    public Phone[] phones;
 
     public float minTime;
     public float midTime;
@@ -161,18 +170,22 @@ public class OrdersManager : MonoBehaviour
         }
     }
 
-    int RandomPhoneLine(List<Order> callingOrders) 
+    int GetBusyLines()
     {
-        bool[] isLineBusy = new bool[numPhoneLines];
         int busyLines = 0;
-        foreach (var order in callingOrders) {
-            isLineBusy[order.phoneLine] = true;
-            busyLines += 1;
+        foreach (var phone in phones) {
+            if ((phone.order != null) && (!phone.order.IsTerminated())) {
+                busyLines += 1;
+            }
         }
+        return busyLines;
+    }
 
-        int relativeLine = UnityEngine.Random.Range(0, numPhoneLines - busyLines);
+    int RandomPhoneLine() 
+    {
+        int relativeLine = UnityEngine.Random.Range(0, numPhoneLines - GetBusyLines());
         for (int i = 0; i < numPhoneLines; ++i) {
-            if (!isLineBusy[i]) {
+            if ((phones[i].order == null) || phones[i].order.IsTerminated()) {
                 if (relativeLine == 0) {
                     return i;
                 }
@@ -182,12 +195,12 @@ public class OrdersManager : MonoBehaviour
         throw new Exception("No empty lines!");
     }
 
-    List<Order> GetCallingOrders() 
+    List<Order> GetOrdersWithStatus(Order.OrderStatus status) 
     {
         var orders = new List<Order>();
         foreach(var order in 
                 from order in orderList
-			    where order.statusList[^1].status == Order.OrderStatus.Calling
+			    where order.currentStatus.status == status
                 select order) {
             orders.Add(order);
         }
@@ -200,6 +213,16 @@ public class OrdersManager : MonoBehaviour
             TestGenerator();
         }
         orderList = new List<Order>();
+
+        phones = new Phone[numPhoneLines];
+        int i = 0;
+        foreach (var phone in GameObject.FindGameObjectsWithTag("Phone").OrderBy(phone => phone.transform.position.x)) {
+            phones[i] = phone.GetComponent<Phone>();
+            phones[i++].id = i;
+        }
+        if (i < numPhoneLines) {
+            throw new Exception("Not enough phones in scene!");
+        }
     }
 
     void Update()
@@ -209,17 +232,17 @@ public class OrdersManager : MonoBehaviour
             order.Update();
         }
 
-        var callingOrders = GetCallingOrders();
-
         if (acceptOrders) {
-            if (callingOrders.Count() < numPhoneLines) {
+            if (GetBusyLines() < numPhoneLines) {
                 waitingTimeLeft -= Time.deltaTime;
                 if (wasFrosen) {
                     waitingTimeLeft -= reduceWaitingTimeAfterFrozen;
                     wasFrosen = false;
                 }
                 if (waitingTimeLeft < 0) {
-                    orderList.Add(new Order(nextId++, RandomPhoneLine(callingOrders), RandomOrderType(), RandomIsCallCorrect(), null));
+                    int phoneLine = RandomPhoneLine();
+                    orderList.Add(new Order(nextId++, phoneLine, RandomOrderType(), RandomIsCallCorrect(), null));
+                    phones[phoneLine].order = orderList[^1];
                     waitingTimeLeft = RandomTimeToNextOrder();
                 }
             } else {
@@ -236,13 +259,9 @@ public class OrdersManager : MonoBehaviour
             return pos;
         }
         
-        // if (Selection.activeGameObject != gameObject)
-        // {
-        //     return;
-        // }
         var textStyle = new GUIStyle();
         textStyle.fontSize = 15;
-        int step = (int)(textStyle.fontSize * 1.1);
+        int step = (int)(textStyle.fontSize * 1.2);
         int pos = 5;
         var resString = string.Format("Time till next call {0}\nOrder List:", waitingTimeLeft.ToString("0.0"));
         EditorGUI.LabelField(new Rect(10, pos, 150, movePos(ref pos, step * resString.Split('\n').Length)), resString, textStyle);
