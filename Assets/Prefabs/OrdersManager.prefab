@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 7251841004399081254}
   - component: {fileID: 7251841004399081252}
   - component: {fileID: 7251841004399081255}
+  - component: {fileID: 2080500366431204018}
   m_Layer: 0
   m_Name: OrdersManager
   m_TagString: Untagged
@@ -45,6 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3b2b558c4756894f82beda4ba003951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  phones: []
   minTime: 20
   midTime: 45
   maxTime: 50
@@ -66,6 +68,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3b2b558c4756894f82beda4ba003951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  phones: []
   minTime: 1
   midTime: 2
   maxTime: 3
@@ -75,3 +78,25 @@ MonoBehaviour:
   reduceWaitingTimeAfterFrozen: 0
   acceptOrders: 1
   numPhoneLines: 5
+--- !u!114 &2080500366431204018
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7251841004399081251}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66aea5699ee8a6e42aa5f5bd4b05029e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  officeLevel: {fileID: 0}
+  summonLevelCorrectPrefabs:
+  - {fileID: 5161812023552973131, guid: 5e7ede4b2eb302e45812f576bf5dba14, type: 3}
+  summonLevelIncorrectPrefabs:
+  - {fileID: 5161812023552973131, guid: 419de5aa4bd4d50498ca9318ede7d94c, type: 3}
+  spellMistakeProbability: 0.4
+  correctSpells:
+  - Magne Diabole, veni ad me et precem meam adimple!
+  incorrectSpells:
+  - Devil come to me!

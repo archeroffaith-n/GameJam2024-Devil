@@ -62,6 +62,8 @@ public class PhoneInteraction : MonoBehaviour
     Phone availablePhone;
     AxisDownUpHandler axisDownUpHandler;
 
+    private bool? couldMove;
+
     void Start()
     {
         availablePhones = new HashSet<Phone>();
@@ -102,19 +104,34 @@ public class PhoneInteraction : MonoBehaviour
         axisDownUpHandler.Update();
         UpdateClosestPhone();
 
-        if ((availablePhone != null) && (availablePhone.order != null) && (availablePhone.order.currentStatus.status == OrdersManager.Order.OrderStatus.Calling)) {
-            if (axisDownUpHandler.GetAxisDown("Submit")) {
-                availablePhone.order.ChangeStatus(OrdersManager.Order.OrderStatus.Answered);
-                gameObject.GetComponent<PlayerMovement>().canMove = false;
-            }
-        } else if ((availablePhone != null) && (availablePhone.order != null) && (availablePhone.order.currentStatus.status == OrdersManager.Order.OrderStatus.Answered)) {
-            if (axisDownUpHandler.GetAxisDown("Submit")) {
-                availablePhone.order.ChangeStatus(OrdersManager.Order.OrderStatus.Accepted);
-                gameObject.GetComponent<PlayerMovement>().canMove = true;
-            } else if (axisDownUpHandler.GetAxisDown("Cancel")) {
-                availablePhone.order.ChangeStatus(OrdersManager.Order.OrderStatus.Aborted);
-                gameObject.GetComponent<PlayerMovement>().canMove = true;
-            }
-        }        
+        if ((gameObject.GetComponent<LevelsManager>().mode != LevelsManager.Mode.Stop) && !couldMove.HasValue) {
+            couldMove = gameObject.GetComponent<PlayerMovement>().canMove;
+            gameObject.GetComponent<PlayerMovement>().canMove = false;
+        }
+
+        if ((gameObject.GetComponent<LevelsManager>().mode == LevelsManager.Mode.Stop) && couldMove.HasValue) {
+            gameObject.GetComponent<PlayerMovement>().canMove = (bool)couldMove;
+            couldMove = null;
+        }
+
+        if (gameObject.GetComponent<LevelsManager>().mode == LevelsManager.Mode.Stop) {
+            if ((availablePhone != null) && (availablePhone.order != null) && (availablePhone.order.currentStatus.status == OrdersManager.Order.OrderStatus.Calling)) {
+                if (axisDownUpHandler.GetAxisDown("Submit")) {
+                    availablePhone.order.ChangeStatus(OrdersManager.Order.OrderStatus.Answered);
+                    gameObject.GetComponent<PlayerMovement>().canMove = false;
+                    gameObject.GetComponent<LevelsManager>().SplitLevel(availablePhone.order.levelAndSpell.level);
+                }
+            } else if ((availablePhone != null) && (availablePhone.order != null) && (availablePhone.order.currentStatus.status == OrdersManager.Order.OrderStatus.Answered)) {
+                if (axisDownUpHandler.GetAxisDown("Submit")) {
+                    availablePhone.order.ChangeStatus(OrdersManager.Order.OrderStatus.Accepted);
+                    gameObject.GetComponent<PlayerMovement>().canMove = true;
+                    gameObject.GetComponent<LevelsManager>().UnsplitLevel(true);
+                } else if (axisDownUpHandler.GetAxisDown("Cancel")) {
+                    availablePhone.order.ChangeStatus(OrdersManager.Order.OrderStatus.Aborted);
+                    gameObject.GetComponent<PlayerMovement>().canMove = true;
+                    gameObject.GetComponent<LevelsManager>().UnsplitLevel(false);
+                }
+            }    
+        }    
     }
 }
